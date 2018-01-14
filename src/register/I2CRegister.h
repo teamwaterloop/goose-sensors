@@ -2,7 +2,6 @@
 #define GOOSE_SENSORS_I2CREGISTER_H
 
 #include <Cosa/TWI.hh>
-#include <Cosa/Trace.hh>
 
 namespace wlp {
 

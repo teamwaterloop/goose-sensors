@@ -1,12 +1,22 @@
+#include <Cosa/Trace.hh>
+#include <Cosa/UART.hh>
+
 #include "sensors/temperature/TMP006.h"
 
 wlp::TMP006 tmp;
 
 void setup() {
+    uart.begin(9600);
+    trace.begin(&uart);
+
+    trace << "======== GOOSE 3 SENSORS ========" << endl;
     if (tmp.begin()) {
-        trace << "Start succeeded" << endl;
+        trace << "TMP006 Start Succeeded" << endl;
     } else {
-        trace << "Start failed" << endl;
+        trace << "TMP006 Start Failed" << endl;
+        while (true) {
+            delay(50);
+        }
     }
 }
 
