@@ -1,28 +1,23 @@
 #include <Cosa/Trace.hh>
 #include <Cosa/UART.hh>
 
-#include "sensors/temperature/TMP006.h"
+#include "sensors/kinematic/LSM9DS1.h"
 
-wlp::TMP006 tmp;
+wlp::LSM9DS1 lsm;
+
 
 void setup() {
     uart.begin(9600);
     trace.begin(&uart);
 
     trace << "======== GOOSE 3 SENSORS ========" << endl;
-    if (tmp.begin()) {
-        trace << "TMP006 Start Succeeded" << endl;
+    if (lsm.begin()) {
+        trace << "Start Succeeded" << endl;
     } else {
-        trace << "TMP006 Start Failed" << endl;
-        while (true) {
-            delay(50);
-        }
+        trace << "Start Failed" << endl;
     }
 }
 
 void loop() {
-    trace << "Die Temp: " << tmp.read_die_temperature() << endl;
-    trace << "Obj Temp: " << tmp.read_obj_temperature() << endl;
-    trace << endl;
     delay(4000);
 }

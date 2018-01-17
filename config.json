@@ -3,7 +3,7 @@
   "ide": "clion", 
   "framework": "cosa", 
   "generator": "", 
-  "port": "/dev/ttyACM0", 
+  "port": "", 
   "cosa-libraries": "", 
   "build-flags": "", 
   "module-flags": {
