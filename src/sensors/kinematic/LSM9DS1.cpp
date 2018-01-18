@@ -72,11 +72,15 @@ void LSM9DS1::accel_set_res() {
 
 void LSM9DS1::accel_init() {
     uint8_t t_reg_value = 0x0;
-
-    t_reg_value |=
-        (m_accel_settings.m_enable_x << 3) ||
-        (m_accel_settings.m_enable_y << 4) ||
-        (m_accel_settings.m_enable_z << 5);
+    if (m_accel_settings.m_enable_x) {
+        t_reg_value |= 1 << 3;
+    }
+    if (m_accel_settings.m_enable_y) {
+        t_reg_value |= 1 << 4;
+    }
+    if (m_accel_settings.m_enable_z) {
+        t_reg_value |= 1 << 5;
+    }
     m_register_ag.write8(CTRL_REG5_XL, t_reg_value);
 
     t_reg_value = 0;
@@ -111,4 +115,42 @@ void LSM9DS1::accel_init() {
     m_register_ag.write8(CTRL_REG7_XL, t_reg_value);
 }
 
+void LSM9DS1::mag_init() {
 
+}
+
+void LSM9DS1::gyro_init() {
+    
+}
+
+bool LSM9DS1::accel_available() {
+    uint8_t status = m_register_ag.read8(STATUS_REG_1);
+    return status != 0;
+}
+
+void LSM9DS1::accel_read() {
+    uint8_t data[6];
+    if (!m_register_ag.read_bytes<6>(OUT_X_L_XL, data)) {
+        return;
+    }
+    // bytes are read backwards
+    m_accel_x = (data[4] << 8) | data[5];
+    m_accel_y = (data[2] << 8) | data[3];
+    m_accel_z = (data[0] << 8) | data[1];
+}
+
+float LSM9DS1::accel_calc(int16_t raw_accel) {
+    return static_cast<float>(m_accel_res * raw_accel);
+}
+
+float LSM9DS1::accel_x() {
+    return accel_calc(m_accel_x);
+}
+
+float LSM9DS1::accel_y() {
+    return accel_calc(m_accel_y);
+}
+
+float LSM9DS1::accel_z() {
+    return accel_calc(m_accel_z);
+}

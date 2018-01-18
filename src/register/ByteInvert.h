@@ -53,7 +53,7 @@ namespace wlp {
 
     template<typename Integer>
     Integer byte_invert(Integer data) {
-        constexpr auto tag = __byte_invert_dispatch_tag<Integer>{};
+        constexpr auto tag = __byte_invert_dispatch_tag<Integer>();
         return __byte_invert(data, tag);
     }
 

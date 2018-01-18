@@ -3,8 +3,6 @@
 
 #include <stdint-gcc.h>
 
-#include <Cosa/TWI.hh>
-
 #include "../../register/I2CRegister.h"
 
 #define LSM9DS1_AG_ADDRESS 0x6b
@@ -197,6 +195,16 @@ namespace wlp {
 
         bool begin();
 
+        bool accel_available();
+
+        void accel_read();
+
+        float accel_x();
+
+        float accel_y();
+
+        float accel_z();
+
     protected:
         void constrain_scales();
 
@@ -204,15 +212,21 @@ namespace wlp {
 
         void accel_init();
 
+        void mag_init();
+
+        void gyro_init();
+
+        float accel_calc(int16_t raw_accel);
+
     private:
         AccelSettings m_accel_settings;
         I2CRegister m_register_m;
         I2CRegister m_register_ag;
 
         double m_accel_res;
-        int16_t m_accel_x_raw;
-        int16_t m_accel_y_raw;
-        int16_t m_accel_z_raw;
+        int16_t m_accel_x;
+        int16_t m_accel_y;
+        int16_t m_accel_z;
     };
 
 }

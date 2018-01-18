@@ -45,6 +45,9 @@ namespace wlp {
         template<typename Integer>
         void write_bytes(uint8_t reg_addr, Integer data);
 
+        template<uint8_t count>
+        bool read_bytes(uint8_t reg_addr, uint8_t *dest);
+
     private:
         TWI::Driver m_driver;
     };
@@ -67,6 +70,16 @@ namespace wlp {
         twi.write(&reg_addr, 1);
         twi.write(&data, bytes);
         twi.release();
+    }
+
+    template<uint8_t count>
+    bool I2CRegister::read_bytes(uint8_t reg_addr, uint8_t *dest) {
+        twi.acquire(&m_driver);
+        if (twi.write(&reg_addr, 1) < 0 || twi.read(&dest, count) < 0) {
+            return false;
+        }
+        twi.release();
+        return true;
     }
 
 }

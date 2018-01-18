@@ -19,5 +19,12 @@ void setup() {
 }
 
 void loop() {
-    delay(4000);
+    if (lsm.accel_available()) {
+        trace << "Accel ready" << endl;
+        lsm.accel_read();
+    } else {
+        trace << "Accel not ready" << endl;
+    }
+    trace << lsm.accel_x() << ", " << lsm.accel_y() << ", " << lsm.accel_z() << endl;
+    delay(1000);
 }

@@ -15,8 +15,6 @@
 #define TMP006_A1   (1.75e-3)
 #define TMP006_S0   (6.4) // * 10^-14
 
-#include <Cosa/TWI.hh>
-
 #include "../../register/I2CRegister.h"
 
 namespace wlp {
