@@ -5,18 +5,17 @@
 
 #include <Cosa/TWI.hh>
 
-#include "../Sensor.h"
 #include "../../register/I2CRegister.h"
 
-#define LSM9DS1_I2C_ADDRESS 0x6b
-//#define LSM9DS1_I2C_ADDRESS 0x1e
+#define LSM9DS1_AG_ADDRESS 0x6b
+#define LSM9DS1_M_ADDRESS 0x1e
 
 #define LSM9DS1_DEV_ID_XG 0x68
-//#define LSM9DS1_DEV_ID_M  0x3d
+#define LSM9DS1_DEV_ID_M  0x3d
 
 namespace wlp {
 
-    class LSM9DS1 : public Sensor, public TWI::Driver {
+    class LSM9DS1 {
     public:
         enum {
             ACT_THS = 0x04,
@@ -101,11 +100,11 @@ namespace wlp {
             X, Y, Z, ALL
         } __attribute__((packed));
 
-        enum Scale {
-            A_SCALE_2G,
-            A_SCALE_16G,
-            A_SCALE_4G,
-            A_SCALE_8G
+        enum AccelScale {
+            A_SCALE_2G = 2,
+            A_SCALE_4G = 4,
+            A_SCALE_8G = 8,
+            A_SCALE_16G = 16
         } __attribute__((packed));
 
         enum ODR {
@@ -122,7 +121,8 @@ namespace wlp {
             A_ABW_408,
             A_ABW_211,
             A_ABW_105,
-            A_ABW_50
+            A_ABW_50,
+            A_ABW_AUTO
         } __attribute__((packed));
 
         enum InterruptSelect {
@@ -166,67 +166,53 @@ namespace wlp {
             FIFO_CONT = 5
         } __attribute__((packed));
 
-        /*// TODO bit field parameters
-        struct AccelSettings {
-            uint8_t enabled;
-            uint8_t scale;
-            uint8_t sample_rate;
-            uint8_t enable_x;
-            uint8_t enable_y;
-            uint8_t enable_z;
-            uint8_t high_res_enabled;
-            uint8_t high_res_bandwidth;
-
-            int8_t bandwidth;
-        };
-
-        struct TemperatureSettings {
-            uint8_t enabled;
-        };
-
-        struct IMUSettings {
-            AccelSettings accel;
-            TemperatureSettings temp;
-        };*/
-
-        struct __attribute__((packed)) Settings {
-            enum {
-                BANDWIDTH_AUTO = 7
-            } __attribute__((packed));
-
-            bool m_enabled : 1 = true;
-            bool m_enable_x : 1 = true;
-            bool m_enable_y : 1 = true;
-            bool m_enable_z : 1 = true;
+        struct __attribute__((packed)) AccelSettings {
+            bool m_enabled : 1;
+            bool m_enable_x : 1;
+            bool m_enable_y : 1;
+            bool m_enable_z : 1;
 
             uint8_t m_scale : 5;
             uint8_t m_sample_rate : 3;
 
-            // Value values 0 <= bandwidth <= 3
-            // If outside range, bandwidth determined by sample rate
+            /**
+             * Valid valid range 0 <= bandwidth <= 3. If value is outside range,
+             * the bandwidth is determined by the sample rate.
+             */
             uint8_t m_bandwidth : 3;
 
-            bool m_high_res_enable : 1 = false;
-            uint8_t m_high_res_bandwidth : 2 = 0;
+            bool m_high_res_enable : 1;
+            uint8_t m_high_res_bandwidth : 2;
 
-            Settings(uint8_t scale, uint8_t sample_rate, uint8_t bandwidth);
+            AccelSettings(uint8_t scale, uint8_t sample_rate, uint8_t bandwidth);
         };
 
         explicit LSM9DS1(
-            uint8_t address = LSM9DS1_I2C_ADDRESS,
-            uint8_t scale = LSM9DS1::Scale::A_SCALE_4G,
-            uint8_t sample_rate = LSM9DS1::ODR::XL_ODR_952,
-            uint8_t bandwidth = LSM9DS1::Settings::BANDWIDTH_AUTO
+            uint8_t address_m = LSM9DS1_M_ADDRESS,
+            uint8_t address_ag = LSM9DS1_AG_ADDRESS,
+            uint8_t scale = AccelScale::A_SCALE_4G,
+            uint8_t sample_rate = ODR::XL_ODR_952,
+            uint8_t bandwidth = ABW::A_ABW_AUTO
         );
 
         bool begin();
 
     protected:
-        float read_value() override;
+        void constrain_scales();
+
+        void accel_set_res();
+
+        void accel_init();
 
     private:
-        Settings m_settings;
-        I2CRegister m_register;
+        AccelSettings m_accel_settings;
+        I2CRegister m_register_m;
+        I2CRegister m_register_ag;
+
+        double m_accel_res;
+        int16_t m_accel_x_raw;
+        int16_t m_accel_y_raw;
+        int16_t m_accel_z_raw;
     };
 
 }

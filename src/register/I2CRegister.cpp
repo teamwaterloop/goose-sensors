@@ -2,8 +2,8 @@
 
 using namespace wlp;
 
-I2CRegister::I2CRegister(TWI::Driver *driver)
-        : m_driver(driver) {}
+I2CRegister::I2CRegister(uint8_t i2c_addr)
+        : m_driver(i2c_addr) {}
 
 void I2CRegister::write8(uint8_t reg_addr, uint8_t data) {
     write_bytes<uint8_t>(reg_addr, data);

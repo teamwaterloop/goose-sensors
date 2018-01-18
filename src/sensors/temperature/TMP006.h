@@ -17,12 +17,11 @@
 
 #include <Cosa/TWI.hh>
 
-#include "../Sensor.h"
 #include "../../register/I2CRegister.h"
 
 namespace wlp {
 
-    class TMP006 : public Sensor, public TWI::Driver {
+    class TMP006 {
     public:
         enum {
             VOBJ = 0x00,
@@ -47,14 +46,9 @@ namespace wlp {
             CFG_SAMPLE_16 = 0x0800
         } __attribute__((packed));
 
-        enum {
-            DIE, OBJECT, NUM_MODES
-        } __attribute__((packed));
-
         explicit TMP006(
             uint8_t address = TMP006_I2C_ADDR,
-            uint16_t sample_rate = TMP006::CFG_SAMPLE_16,
-            uint8_t mode = TMP006::DIE
+            uint16_t sample_rate = TMP006::CFG_SAMPLE_16
         );
 
         bool begin();
@@ -68,17 +62,14 @@ namespace wlp {
         double read_obj_temperature();
 
     protected:
-        float read_value() override;
-
-    private:
         int16_t read_raw_die_temperature();
 
         int16_t read_raw_voltage();
 
-        uint8_t m_sample_rate;
-        uint8_t m_mode;
-
+    private:
         I2CRegister m_register;
+
+        uint8_t m_sample_rate;
     };
 
 }

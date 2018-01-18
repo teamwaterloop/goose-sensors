@@ -7,7 +7,7 @@ namespace wlp {
 
     class I2CRegister {
     public:
-        explicit I2CRegister(TWI::Driver *driver);
+        explicit I2CRegister(uint8_t i2c_addr);
 
         uint8_t read8(uint8_t reg_addr);
 
@@ -46,14 +46,14 @@ namespace wlp {
         void write_bytes(uint8_t reg_addr, Integer data);
 
     private:
-        TWI::Driver *m_driver;
+        TWI::Driver m_driver;
     };
 
     template<typename Integer>
     Integer I2CRegister::read_bytes(uint8_t reg_addr) {
         constexpr auto bytes = static_cast<uint8_t>(sizeof(Integer));
         auto ret = static_cast<Integer>(0);
-        twi.acquire(m_driver);
+        twi.acquire(&m_driver);
         twi.write(&reg_addr, 1);
         twi.read(&ret, bytes);
         twi.release();
@@ -63,7 +63,7 @@ namespace wlp {
     template<typename Integer>
     void I2CRegister::write_bytes(uint8_t reg_addr, Integer data) {
         constexpr auto bytes = static_cast<uint8_t>(sizeof(Integer));
-        twi.acquire(m_driver);
+        twi.acquire(&m_driver);
         twi.write(&reg_addr, 1);
         twi.write(&data, bytes);
         twi.release();
