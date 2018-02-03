@@ -120,7 +120,7 @@ void LSM9DS1::mag_init() {
 }
 
 void LSM9DS1::gyro_init() {
-    
+
 }
 
 bool LSM9DS1::accel_available() {
