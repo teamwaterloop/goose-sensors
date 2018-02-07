@@ -9,6 +9,8 @@ namespace wlp {
         explicit TMP36(Board::AnalogPin analog_pin);
 
         double read_temperature();
+        void begin();
+        void sleep();
 
     protected:
 
