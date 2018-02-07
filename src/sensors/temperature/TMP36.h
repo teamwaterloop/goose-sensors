@@ -1,5 +1,6 @@
 #ifndef GOOSE_SENSORS_TMP36_H
 #define GOOSE_SENSORS_TMP36_H
+#define SCALE 0.0048828
 #include <Cosa/AnalogPin.hh>
 
 namespace wlp {

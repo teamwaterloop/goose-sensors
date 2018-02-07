@@ -1,5 +1,4 @@
 #include "TMP36.h"
-#define SCALE 0.0048828
 
 using namespace wlp;
 
