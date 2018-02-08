@@ -1,6 +1,8 @@
 #ifndef GOOSE_SENSORS_TMP36_H
 #define GOOSE_SENSORS_TMP36_H
+
 #define SCALE 0.0048828
+
 #include <Cosa/AnalogPin.hh>
 
 namespace wlp {
@@ -10,14 +12,13 @@ namespace wlp {
         explicit TMP36(Board::AnalogPin analog_pin);
 
         double read_temperature();
+
         void begin();
+
         void sleep();
 
-    protected:
-
     private:
-        AnalogPin pin;
-
+        AnalogPin m_analog_pin;
     };
 
 }
