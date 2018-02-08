@@ -7,5 +7,6 @@ install:
     - pip install --upgrade pip
     - pip install wcosa
 script:
+    - wcosa update
     - wcosa build
 
