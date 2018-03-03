@@ -1,12 +1,11 @@
 dist: trusty
 language: python
 before_install:
-    - sudo apt-get update -qq
+  - sudo apt-get update -qq
 install:
-    - sudo apt-get install gcc-avr binutils-avr avr-libc avrdude -y -qq
-    - pip install --upgrade pip
-    - pip install wcosa
+  - sudo apt-get install -qq gcc-avr binutils-avr avr-libc avrdude -y
+  - pip install --upgrade pip
+  - pip install wcosa
 script:
-    - wcosa update
-    - wcosa build
-
+  - wcosa update
+  - wcosa build
