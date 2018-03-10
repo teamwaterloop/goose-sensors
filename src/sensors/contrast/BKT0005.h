@@ -12,7 +12,7 @@ namespace wlp {
 
         uint16_t read_contrast();
 
-	bool read_pnp();
+        bool read_pnp();
 
         void begin();
 
@@ -20,7 +20,7 @@ namespace wlp {
 
     private:
         AnalogPin m_analog_pin;
-	InputPin m_pnp_pin;
+        InputPin m_pnp_pin;
     };
 
 }

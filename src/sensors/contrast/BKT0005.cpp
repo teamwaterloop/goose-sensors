@@ -10,7 +10,7 @@ uint16_t BKT0005::read_contrast() {
 }
 
 bool BKT0005::read_pnp() {
-	return m_pnp_pin.is_on();
+    return m_pnp_pin.is_on();
 }
 
 void BKT0005::begin() {
