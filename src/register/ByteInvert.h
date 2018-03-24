@@ -1,7 +1,7 @@
 #ifndef GOOSE_SENSORS_BYTEINVERT_H
 #define GOOSE_SENSORS_BYTEINVERT_H
 
-#include <utility/Tmp.h>
+#include <wlib/utility/Tmp.h>
 
 
 namespace wlp {

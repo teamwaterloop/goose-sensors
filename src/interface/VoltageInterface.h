@@ -1,7 +1,7 @@
 #ifndef GOOSE_SENSORS_VOLTAGEINTERFACE_H
 #define GOOSE_SENSORS_VOLTAGEINTERFACE_H
 
-#include <utility/Tmp.h>
+#include <wlib/utility/Tmp.h>
 #include <Cosa/AnalogPin.hh>
 
 namespace wlp {
