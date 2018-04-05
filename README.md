@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/waterloop/goose-sensors.svg?branch=master)](https://travis-ci.org/waterloop/goose-sensors)
 # Goose 3 Sensors
 This repository contains code and supporting code for the sensors on the Goose 3 Hyperloop Pod.
 
