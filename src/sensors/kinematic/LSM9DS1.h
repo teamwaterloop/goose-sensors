@@ -1,8 +1,6 @@
 #ifndef GOOSE_SENSORS_LSM9DS1_H
 #define GOOSE_SENSORS_LSM9DS1_H
 
-#include <stdint-gcc.h>
-
 #include "../../register/I2CRegister.h"
 
 #define LSM9DS1_AG_ADDRESS 0x6b
