@@ -4,29 +4,66 @@
 #include "../../register/I2CRegister.h"
 
 #define LSM9DS1_AG_ADDRESS 0x6b
-//#define LSM9DS1_M_ADDRESS 0x1e
+#define LSM9DS1_M_ADDRESS 0x1e
 
 #define LSM9DS1_DEV_ID_XG 0x68
-//#define LSM9DS1_DEV_ID_M  0x3d
+#define LSM9DS1_DEV_ID_M  0x3d
 
 namespace wlp {
 
     class LSM9DS1 {
     public:
-
         enum {
+            ACT_THS = 0x04,
+            ACT_DUR = 0x05,
+            INT_GEN_CFG_XL = 0x06,
+            INT_GEN_THS_X_XL = 0x07,
+            INT_GEN_THS_Y_XL = 0x08,
+            INT_GEN_THS_Z_XL = 0x09,
+            INT_GEN_DUR_XL = 0x0a,
+            REFERENCE_G = 0x0b,
             INT1_CTRL = 0x0c,
             INT2_CTRL = 0x0d,
             DEV_ID_XG = 0x0f,
+            CTRL_REG1_G = 0x10,
+            CTRL_REG2_G = 0x11,
+            CTRL_REG3_G = 0x12,
+            ORIENT_CFG_G = 0x13,
+            INT_GEN_SRC_G = 0x14,
+            OUT_TEMP_L = 0x15,
+            OUT_TEMP_H = 0x16,
+            STATUS_REG_0 = 0x17,
+            OUT_X_L_G = 0x18,
+            OUT_X_H_G = 0x19,
+            OUT_Y_L_G = 0x1a,
+            OUT_Y_H_G = 0x1b,
+            OUT_Z_L_G = 0x1c,
+            OUT_Z_H_G = 0x1d,
+            CTRL_REG4 = 0x1e,
             CTRL_REG5_XL = 0x1f,
             CTRL_REG6_XL = 0x20,
             CTRL_REG7_XL = 0x21,
+            CTRL_REG8 = 0x22,
             CTRL_REG9 = 0x23,
+            CTRL_REG10 = 0x24,
+            INT_GEN_SRC_XL = 0x26,
             STATUS_REG_1 = 0x27,
             OUT_X_L_XL = 0x28,
+            OUT_X_H_XL = 0x29,
+            OUT_Y_L_XL = 0x2a,
+            OUT_Y_H_XL = 0x2b,
+            OUT_Z_L_XL = 0x2c,
+            OUT_Z_H_XL = 0x2d,
             FIFO_CTRL = 0x2e,
             FIFO_SRC = 0x2f,
-
+            INT_GEN_CFG_G = 0x30,
+            INT_GEN_THS_XH_G = 0x31,
+            INT_GEN_THS_XL_G = 0x32,
+            INT_GEN_THS_YH_G = 0x33,
+            INT_GEN_THS_YL_G = 0x34,
+            INT_GEN_THS_ZH_G = 0x35,
+            INT_GEN_THS_ZL_G = 0x36,
+            INT_GEN_DUR_G = 0x37
         } __attribute__((packed));
 
         enum {
@@ -55,15 +92,15 @@ namespace wlp {
             INT_THS_H_M = 0x33
         } __attribute__((packed));
 
-        enum Axis{
+        enum Axis {
             X, Y, Z, ALL
         } __attribute__((packed));
 
         enum AccelScale {
-            a2G = 2,
-            a4G = 4,
-            a8G = 8,
-            a16G = 16
+            A_SCALE_2G = 2,
+            A_SCALE_4G = 4,
+            A_SCALE_8G = 8,
+            A_SCALE_16G = 16
         } __attribute__((packed));
 
         enum ODR {
@@ -85,8 +122,6 @@ namespace wlp {
         } __attribute__((packed));
 
         enum InterruptSelect {
-            XG_INT1 = INT1_CTRL,
-            XG_INT2 = INT2_CTRL,
             INT_DRDY_XL = 1 << 0,
             INT_DRDY_G = 1 << 1,
             INT1_BOOT = 1 << 2,
@@ -128,47 +163,38 @@ namespace wlp {
         } __attribute__((packed));
 
         struct __attribute__((packed)) AccelSettings {
-            bool enabled:1;
-            bool enableX:1;
-            bool enableY:1;
-            bool enableZ:1;
+            bool m_enabled : 1;
+            bool m_enable_x : 1;
+            bool m_enable_y : 1;
+            bool m_enable_z : 1;
 
-            uint8_t scale:2;
-            uint8_t sampleRate:6;
-            uint8_t bandwidth=-1;
-            uint8_t highResEnable=false;
-            uint8_t highResBandwidth=0;
+            uint8_t m_scale : 5;
+            uint8_t m_sample_rate : 3;
 
-            //Valid valid range 0 <= bandwidth <= 3. If value is outside range,
-            //the bandwidth is determined by the sample rate.
-
-            /*uint8_t m_bandwidth : 3;
+            /**
+             * Valid valid range 0 <= bandwidth <= 3. If value is outside range,
+             * the bandwidth is determined by the sample rate.
+             */
+            uint8_t m_bandwidth : 3;
 
             bool m_high_res_enable : 1;
-            uint8_t m_high_res_bandwidth : 2;*/
+            uint8_t m_high_res_bandwidth : 2;
 
             AccelSettings(uint8_t scale, uint8_t sample_rate, uint8_t bandwidth);
         };
 
-        AccelSettings accelSettings;
+        explicit LSM9DS1(
+            uint8_t address_m = LSM9DS1_M_ADDRESS,
+            uint8_t address_ag = LSM9DS1_AG_ADDRESS,
+            uint8_t scale = AccelScale::A_SCALE_4G,
+            uint8_t sample_rate = ODR::XL_ODR_952,
+            uint8_t bandwidth = ABW::A_ABW_AUTO
+        );
 
-        int16_t ax, ay, az; //x,y,z readings of accelorometer
-
-        float aBias[3];
-        int16_t aBiasRaw[3];
-
-        //begin() sets up the scale and output rate of each
-        // sensor. Values set in the AccelSettings struct
-        // will take affect after calling this function
         bool begin();
-
-        void calibrate(bool autoCalc = true);
 
         bool accel_available();
 
-        // read the accelerometer output registers
-        //this function will read all six accelerometer output registers
-        //readings are stored in the ax, ay, az, variables. Read those after calling accel_read()
         void accel_read();
 
         float accel_x();
@@ -177,53 +203,28 @@ namespace wlp {
 
         float accel_z();
 
-        //convert from RAW signed 16-bit value to gravity (g's)
-        float accel_calc(int16_t raw_accel);
-
-        //input: the desired accel scale. Must be from AccelScale values
-        void accel_set_scale(uint8_t aScl);
-
-        // Set the output data rate of the accelerometer
-        // Input:
-        //	- aRate = The desired output rate of the accel.
-        void accel_set_odr(uint8_t aRate);
-
-        void enableFIFO(bool enable = true);
-
-        // setFIFO() - Configure FIFO mode and Threshold
-        void setFIFO(FIFOModeType fifoMode, uint8_t fifoThs);
-
-
-        explicit LSM9DS1(
-            uint8_t address_ag = LSM9DS1_AG_ADDRESS,
-            uint8_t scale = AccelScale::a2G,
-            uint8_t sample_rate = ODR::XL_ODR_952,
-            uint8_t bandwidth = ABW::A_ABW_AUTO
-        );
-
     protected:
+        void constrain_scales();
 
-        I2CRegister accel_register;
-
-        float aRes;
-
-        bool _autoCalc;
+        void accel_set_res();
 
         void accel_init();
 
-        void calcaRes();
+        void mag_init();
 
-        void constrainScales();
+        void gyro_init();
+
+        float accel_calc(int16_t raw_accel);
 
     private:
-        //AccelSettings m_accel_settings;
-        //I2CRegister m_register_m;
-        //I2CRegister m_register_ag;
+        AccelSettings m_accel_settings;
+        I2CRegister m_register_m;
+        I2CRegister m_register_ag;
 
-        /*double m_accel_res;
+        double m_accel_res;
         int16_t m_accel_x;
         int16_t m_accel_y;
-        int16_t m_accel_z; */
+        int16_t m_accel_z;
     };
 
 }
