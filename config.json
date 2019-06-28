@@ -1,9 +1,9 @@
 {
-  "board": "mega2560", 
+  "board": "uno", 
   "ide": "clion", 
   "framework": "cosa", 
   "generator": "", 
-  "port": "", 
+  "port": "COM4", 
   "cosa-libraries": "", 
   "build-flags": "", 
   "module-flags": {
